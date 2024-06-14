@@ -14,6 +14,10 @@ The KerSplash application creates a splash screen that displays an image of a Bo
 * Chaos mode for when you want a lot of splash screens
 * rudimentary multi-monitor support (needs more work)
 
+**Video**
+
+[![Features showCase](https://img.youtube.com/vi/bcR_WZGAwFI/1.jpg)](https://youtu.be/bcR_WZGAwFI)
+
 **Requirements**
 
 * .NET Framework
