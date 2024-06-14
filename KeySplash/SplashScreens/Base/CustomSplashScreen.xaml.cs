@@ -1,7 +1,8 @@
 ﻿using System.IO;
 using System.Windows;
-using System.Windows.Input;
+using System.Windows.Forms;
 using System.Windows.Media.Imaging;
+using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 
 namespace KeySplash;
 
@@ -13,8 +14,9 @@ public partial class CustomSplashScreen : Window
     private DateTime _endFadeTime;
     private DateTime _endCloseTime;
     private bool _stopClosing;
-    public int MaxLeft { get; }
-    public int MaxTop { get; }
+    public int MaxLeft { get; set; }
+    public int MaxTop { get; set; }
+    private Random _random = new();
 
     public CustomSplashScreen(Window window,string resource, int width, int height)
     {
@@ -80,5 +82,39 @@ public partial class CustomSplashScreen : Window
     private void CustomSplashScreen_OnKeyUp(object sender, KeyEventArgs e)
     {
         ((MainWindow)Owner).MainWindow_OnKeyUp(sender,e);
+    }
+    
+    public void PositionSplashScreen(bool isRandomPosition, int x, int y)
+    {
+        int minLeft = 0;
+        int minTop = 0;
+        if (Owner.Left < 0)
+        {
+            minLeft = (int)-System.Windows.SystemParameters.VirtualScreenWidth;
+            x = minLeft + x;
+            MaxLeft = (int)(0 - Width);
+        }
+        else if (Owner.Left > System.Windows.SystemParameters.PrimaryScreenWidth)
+        {
+            minLeft = (int)System.Windows.SystemParameters.PrimaryScreenWidth; 
+            x = minLeft + x;
+            MaxLeft = (int)(System.Windows.SystemParameters.PrimaryScreenWidth +
+                                  System.Windows.SystemParameters.VirtualScreenWidth - Width);
+        }
+        else
+        {
+            MaxLeft = (int)(System.Windows.SystemParameters.PrimaryScreenWidth - Width);
+            MaxTop = (int)(System.Windows.SystemParameters.PrimaryScreenHeight - Height); 
+        }
+        if (!isRandomPosition)
+        {
+            this.Left = Math.Min(x,this.MaxLeft);
+            this.Top = Math.Min(y,this.MaxTop);
+        }
+        else
+        {
+            this.Left = _random.Next(minLeft,this.MaxLeft);
+            this.Top = _random.Next(minTop,this.MaxTop);
+        }
     }
 }

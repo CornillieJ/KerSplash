@@ -30,6 +30,11 @@
                                 <CheckBox x:Name="chkRandom" Margin="0,6" IsChecked="True" 
                                           Checked="ChkRandom_OnChecked" Unchecked="ChkRandom_OnChecked"/>
                             </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="Complete Chaos?"/>
+                                <CheckBox x:Name="chkMultiple" Margin="0,6" IsChecked="False" 
+                                          Checked="ChkMultiple_OnChecked" Unchecked="ChkMultiple_OnChecked"/>
+                            </StackPanel>
                         </StackPanel>
                     </GroupBox>
                     <GroupBox HorizontalAlignment="Stretch">

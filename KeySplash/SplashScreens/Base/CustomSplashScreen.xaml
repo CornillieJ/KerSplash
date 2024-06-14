@@ -7,6 +7,7 @@
         mc:Ignorable="d"
         Title="CustomSplashScreen" Height="450" Width="800" 
         AllowsTransparency="True" WindowStyle="None"
+        WindowStartupLocation="Manual"
         Background="Transparent" Loaded="CustomSplashScreen_OnLoaded"
         KeyDown="CustomSplashScreen_OnKeyDown"
         KeyUp="CustomSplashScreen_OnKeyUp">

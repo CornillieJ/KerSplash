@@ -29,8 +29,9 @@ public partial class MainWindow : Window
     private bool _isRandomPosition;
     private int _splashX;
     private int _splashY;
-    private readonly Random _random = new();
     private IKeyboardMouseEvents _globalHook;
+    private bool _isMultiple;
+
     public MainWindow()
     {
         InitializeComponent();
@@ -55,10 +56,10 @@ public partial class MainWindow : Window
         }
         _keysPressedCount++;
         if (Application.Current.Windows.OfType<CustomSplashScreen>().FirstOrDefault() is CustomSplashScreen
-            OpenSplashScreen)
+            OpenSplashScreen && !_isMultiple)
         {
             OpenSplashScreen.ResetClosing();
-            PositionSplashScreen(OpenSplashScreen);
+            OpenSplashScreen.PositionSplashScreen(_isRandomPosition, _splashX, _splashY);
             if(OpenSplashScreen is BongoCat bongoCat) bongoCat.Tap();
             return;
         }
@@ -113,14 +114,14 @@ public partial class MainWindow : Window
     private CustomSplashScreen ShowSplash(string resource)
     {
         CustomSplashScreen splash = new CustomSplashScreen(this,resource,_splashWidth,_splashHeight);
-        PositionSplashScreen(splash);
+        splash.PositionSplashScreen(_isRandomPosition, _splashX, _splashY);
         splash.Show();
         return splash;
     }
     private CustomSplashScreen ShowBongo()
     {
         CustomSplashScreen splash = new BongoCat(this, _splashWidth,_splashHeight);
-        PositionSplashScreen(splash);
+        splash.PositionSplashScreen(_isRandomPosition, _splashX, _splashY);
         splash.Show();
         return splash;
     }
@@ -136,19 +137,6 @@ public partial class MainWindow : Window
         splash.CloseDelayed(timeSpanForFade);
     }
 
-    private void PositionSplashScreen(CustomSplashScreen splash)
-    {
-        if (!_isRandomPosition)
-        {
-            splash.Left = Math.Min(_splashX,splash.MaxLeft);
-            splash.Top = Math.Min(_splashY,splash.MaxTop);
-        }
-        else
-        {
-            splash.Left = _random.Next(splash.MaxLeft);
-            splash.Top = _random.Next(splash.MaxTop);
-        }
-    }
     private void HookKeyboard()
     {
         _globalHook = Hook.GlobalEvents();
@@ -175,5 +163,13 @@ public partial class MainWindow : Window
         _globalHook.KeyUp -= GlobalHook_KeyUp;
         _globalHook.Dispose();
         base.OnClosed(e);
+    }
+
+    private void ChkMultiple_OnChecked(object sender, RoutedEventArgs e)
+    {
+        _isMultiple = chkMultiple.IsChecked ?? false;
+        if (_isMultiple)
+            _isRandomPosition = true;
+        else _isRandomPosition = chkRandom.IsChecked ?? false;
     }
 }
