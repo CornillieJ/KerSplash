@@ -43,6 +43,10 @@ public partial class CustomSplashScreen : Window
             Opacity = (_endFadeTime - now).Ticks / (double)timeSpan.Ticks;
             await Task.Delay(1);
             now = DateTime.Now;
+            //Meet bongocat, hij typt mee met mijn keystrokes
+            // nu komt hij tevoorschijn op willekeurige locaties.
+            // En dit is hoe ik vanaf nu ga programmeren.
+            //Zodat ik me goed kan focussen!
             if (_stopClosing)
             {
                 _stopClosing = false;

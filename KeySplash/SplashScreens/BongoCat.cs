@@ -10,10 +10,13 @@ public class BongoCat:CustomSplashScreen
     private const string BongoCatIdle = "/resources/bongo_idle.jpg"; 
     private const string BongoCatLeft = "/resources/bongo_left.jpg"; 
     private const string BongoCatRight = "/resources/bongo_right.jpg";
+    private readonly string[] Bongos = [BongoCatIdle,BongoCatRight,BongoCatLeft];
     private TimeSpan BongoDelay = new (0, 0, 0, 0, 200);
     private Random random = new();
-    public BongoCat(Window window, int width, int height) : base(window, BongoCatIdle,width,height)
+    public BongoCat(Window window, int width, int height) : base(window,BongoCatIdle,width,height)
     {
+        string randomBongo = Bongos[random.Next(3)];
+        ChangeImage(randomBongo);
     }
 
     public void Tap()

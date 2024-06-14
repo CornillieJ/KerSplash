@@ -40,8 +40,8 @@ public partial class MainWindow : Window
     
     private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
     {
-        txtHeight.Text = BongoCat.ImageHeight.ToString();
-        txtWidth.Text = BongoCat.ImageWidth.ToString();
+        txtHeight.Text = "251";
+        txtWidth.Text = "154";
         _imageRatio = BongoCat.ImageWidth / (double)BongoCat.ImageHeight;
         cmbOptions.ItemsSource = Options;
         cmbOptions.SelectedIndex = 0;
@@ -116,6 +116,7 @@ public partial class MainWindow : Window
         CustomSplashScreen splash = new CustomSplashScreen(this,resource,_splashWidth,_splashHeight);
         splash.PositionSplashScreen(_isRandomPosition, _splashX, _splashY);
         splash.Show();
+        splash.Topmost = true;
         return splash;
     }
     private CustomSplashScreen ShowBongo()
@@ -123,6 +124,7 @@ public partial class MainWindow : Window
         CustomSplashScreen splash = new BongoCat(this, _splashWidth,_splashHeight);
         splash.PositionSplashScreen(_isRandomPosition, _splashX, _splashY);
         splash.Show();
+        splash.Topmost = true;
         return splash;
     }
     private void HideSplash(CustomSplashScreen? splash, bool isInstant = false)
