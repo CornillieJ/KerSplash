@@ -5,12 +5,14 @@ namespace KeySplash.SplashScreens;
 
 public class BongoCat:CustomSplashScreen
 {
+    public static int ImageWidth = 498;
+    public static int ImageHeight = 306;
     private const string BongoCatIdle = "/resources/bongo_idle.jpg"; 
     private const string BongoCatLeft = "/resources/bongo_left.jpg"; 
     private const string BongoCatRight = "/resources/bongo_right.jpg";
     private TimeSpan BongoDelay = new (0, 0, 0, 0, 200);
     private Random random = new();
-    public BongoCat(Window window) : base(window, BongoCatIdle)
+    public BongoCat(Window window, int width, int height) : base(window, BongoCatIdle,width,height)
     {
     }
 

@@ -13,20 +13,24 @@ public partial class CustomSplashScreen : Window
     private DateTime _endFadeTime;
     private DateTime _endCloseTime;
     private bool _stopClosing;
+    public int MaxLeft { get; }
+    public int MaxTop { get; }
 
-    public CustomSplashScreen(Window window,string resource)
+    public CustomSplashScreen(Window window,string resource, int width, int height)
     {
         InitializeComponent();
         Owner = window;
         Uri imageUri = new Uri(resource, UriKind.Relative);
         Image.Source = new BitmapImage(imageUri);
         Resource = resource;
+        this.Width = width;
+        this.Height = height;
+        MaxLeft = (int)(System.Windows.SystemParameters.PrimaryScreenWidth - width);
+        MaxTop = (int)(System.Windows.SystemParameters.PrimaryScreenHeight - height);
     }
 
     private void CustomSplashScreen_OnLoaded(object sender, RoutedEventArgs e)
     {
-        this.Width = Image.Width;
-        this.Height = Image.Height;
     }
     private async void FadeClose(TimeSpan timeSpan)
     {

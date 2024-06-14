@@ -5,22 +5,50 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:KeySplash"
         mc:Ignorable="d"
-        Title="KeySplash" Height="450" Width="800" KeyDown="MainWindow_OnKeyDown" KeyUp="MainWindow_OnKeyUp" >
+        Title="KeySplash" Height="450" Width="800" KeyDown="MainWindow_OnKeyDown" KeyUp="MainWindow_OnKeyUp"
+        Loaded="MainWindow_OnLoaded">
     <Grid>
         <StackPanel Margin="100,50" HorizontalAlignment="Stretch" Orientation="Vertical">
             <GroupBox>
-                <StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <Label Content="Image Width:" HorizontalContentAlignment="Right"/>
-                        <TextBox x:Name="txtWidth" Width="150" Margin="3,3"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <Label Content="Image Height:" HorizontalContentAlignment="Right"/>
-                        <TextBox x:Name="txtHeight" Width="150" Margin="0,3"/>
-                    </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+                    <GroupBox HorizontalAlignment="Left" HorizontalContentAlignment="Stretch">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="Image Width:" HorizontalContentAlignment="Right"/>
+                                <TextBox x:Name="txtWidth" Width="150" Margin="3,3" LostFocus="TxtWidth_OnLostFocus"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="Image Height:" HorizontalContentAlignment="Right"/>
+                                <TextBox x:Name="txtHeight" Width="150" Margin="0,3" LostFocus="TxtHeight_OnLostFocus"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </GroupBox>
+                    <GroupBox HorizontalAlignment="Stretch">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="Random locations?"/>
+                                <CheckBox x:Name="chkRandom" Margin="0,6" IsChecked="True" 
+                                          Checked="ChkRandom_OnChecked" Unchecked="ChkRandom_OnChecked"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </GroupBox>
+                    <GroupBox HorizontalAlignment="Stretch">
+                        <StackPanel x:Name="stkPositions" Visibility="Hidden">
+                            <StackPanel Orientation="Horizontal">
+                                <StackPanel Margin="20,5,5,0">
+                                    <Label Content="X position"/>
+                                    <TextBox x:Name="txtX" Width="50"/>
+                                </StackPanel>
+                                <StackPanel Margin="20,5,10,0">
+                                    <Label Content="Y position"/>
+                                    <TextBox x:Name="txtY" Width="50"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </StackPanel>
+                    </GroupBox> 
                 </StackPanel>
             </GroupBox>
-            <ComboBox x:Name="cmbOptions"> <ComboBoxItem>BongoCat</ComboBoxItem></ComboBox>
+            <ComboBox x:Name="cmbOptions"></ComboBox>
             <Button x:Name="btnStart" Content="Start" FontSize="50" Margin="50" Height="150" Width="200" Click="BtnStart_OnClick"/>
         </StackPanel>
     </Grid>

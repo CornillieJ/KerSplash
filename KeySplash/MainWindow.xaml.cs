@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Globalization;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -18,40 +19,107 @@ namespace KeySplash;
 public partial class MainWindow : Window
 {
     private const string ResourceLocation = "/resources/bongo_idle.jpg";
+    private readonly string[] Options = ["BongoCat"];
     private bool _isStarted;
     private bool _isTimerReset;
     private CustomSplashScreen _currentCustomSplashScreen;
-    private bool _isKeyDown;
+    private int _keysPressedCount = 0;
+    private int _splashWidth;
+    private int _splashHeight;
+    private double _imageRatio;
+    private bool _isRandomPosition;
+    private int _splashX;
+    private int _splashY;
+    private Random random = new();
 
     public MainWindow()
     {
         InitializeComponent();
     }
-    
+    private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
+    {
+        txtHeight.Text = BongoCat.ImageHeight.ToString();
+        txtWidth.Text = BongoCat.ImageWidth.ToString();
+        _imageRatio = BongoCat.ImageWidth / (double)BongoCat.ImageHeight;
+        cmbOptions.ItemsSource = Options;
+        cmbOptions.SelectedIndex = 0;
+    } 
     public void MainWindow_OnKeyDown(object sender, KeyEventArgs e)
     {
-        if (_isKeyDown || !_isStarted) return;
-        _isKeyDown = true;
+        if (_keysPressedCount > 0 || !_isStarted) return;
+        if (e.Key == Key.Escape)
+        {
+            BtnStart_OnClick(null,null);
+            return;
+        }
+        _keysPressedCount++;
         if (Application.Current.Windows.OfType<CustomSplashScreen>().FirstOrDefault() is CustomSplashScreen
             OpenSplashScreen)
         {
             OpenSplashScreen.ResetClosing();
+            PositionSplashScreen(OpenSplashScreen);
             if(OpenSplashScreen is BongoCat bongoCat) bongoCat.Tap();
             return;
         }
         _currentCustomSplashScreen = ShowBongo();
         HideSplash(_currentCustomSplashScreen);
     }
+    public void MainWindow_OnKeyUp(object sender, KeyEventArgs e)
+    {
+        _keysPressedCount--;
+        if (_keysPressedCount < 0) _keysPressedCount = 0;
+        if (!_isStarted) return;
+        foreach (Key key in Enum.GetValues(typeof(Key)))
+        {
+            if (key == Key.None) continue;
+            if (Keyboard.IsKeyDown(key)) return;
+        }
+    }
 
+    private void BtnStart_OnClick(object sender, RoutedEventArgs e)
+    {
+        _isStarted = !_isStarted;
+        btnStart.Content = _isStarted ? "Stop" : "Start";
+        txtHeight.IsEnabled = !txtHeight.IsEnabled;
+        txtWidth.IsEnabled = !txtWidth.IsEnabled;
+        txtX.IsEnabled = !txtX.IsEnabled;
+        txtY.IsEnabled = !txtY.IsEnabled;
+        chkRandom.IsEnabled = !chkRandom.IsEnabled;
+        int.TryParse(txtHeight.Text.Trim(), out _splashHeight);
+        int.TryParse(txtWidth.Text.Trim(), out _splashWidth);
+        int.TryParse(txtX.Text.Trim(), out _splashX);
+        int.TryParse(txtY.Text.Trim(), out _splashY);
+    }
+    
+    private void TxtWidth_OnLostFocus(object sender, RoutedEventArgs e)
+    {
+        int.TryParse(txtWidth.Text.Trim(), out int width);
+        txtHeight.Text = Math.Round(width / _imageRatio).ToString();
+    }
+
+    private void TxtHeight_OnLostFocus(object sender, RoutedEventArgs e)
+    {
+        int.TryParse(txtHeight.Text.Trim(), out int height);
+        txtWidth.Text = Math.Round(height * _imageRatio).ToString();
+    }
+
+    private void ChkRandom_OnChecked(object sender, RoutedEventArgs e)
+    {
+        _isRandomPosition = chkRandom.IsChecked??false;
+        if (stkPositions is null) return;
+        stkPositions.Visibility = _isRandomPosition? Visibility.Hidden: Visibility.Visible;
+    }
     private CustomSplashScreen ShowSplash(string resource)
     {
-        CustomSplashScreen splash = new CustomSplashScreen(this,resource);
+        CustomSplashScreen splash = new CustomSplashScreen(this,resource,_splashWidth,_splashHeight);
+        PositionSplashScreen(splash);
         splash.Show();
         return splash;
     }
     private CustomSplashScreen ShowBongo()
     {
-        CustomSplashScreen splash = new BongoCat(this);
+        CustomSplashScreen splash = new BongoCat(this, _splashWidth,_splashHeight);
+        PositionSplashScreen(splash);
         splash.Show();
         return splash;
     }
@@ -67,20 +135,17 @@ public partial class MainWindow : Window
         splash.CloseDelayed(timeSpanForFade);
     }
 
-    public void MainWindow_OnKeyUp(object sender, KeyEventArgs e)
+    private void PositionSplashScreen(CustomSplashScreen splash)
     {
-        if (!_isStarted) return;
-        foreach (Key key in Enum.GetValues(typeof(Key)))
+        if (!_isRandomPosition)
         {
-            if (key == Key.None) continue;
-            if (Keyboard.IsKeyDown(key)) return;
+            splash.Left = Math.Min(_splashX,splash.MaxLeft);
+            splash.Top = Math.Min(_splashY,splash.MaxTop);
         }
-        _isKeyDown = false;
-    }
-
-    private void BtnStart_OnClick(object sender, RoutedEventArgs e)
-    {
-        _isStarted = !_isStarted;
-        btnStart.Content = _isStarted ? "Stop" : "Start";
+        else
+        {
+            splash.Left = random.Next(splash.MaxLeft);
+            splash.Top = random.Next(splash.MaxTop);
+        }
     }
 }
