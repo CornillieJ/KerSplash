@@ -9,6 +9,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Gma.System.MouseKeyHook;
 using KeySplash.SplashScreens;
 
 namespace KeySplash;
@@ -21,21 +22,21 @@ public partial class MainWindow : Window
     private const string ResourceLocation = "/resources/bongo_idle.jpg";
     private readonly string[] Options = ["BongoCat"];
     private bool _isStarted;
-    private bool _isTimerReset;
-    private CustomSplashScreen _currentCustomSplashScreen;
-    private int _keysPressedCount = 0;
+    private int _keysPressedCount;
     private int _splashWidth;
     private int _splashHeight;
     private double _imageRatio;
     private bool _isRandomPosition;
     private int _splashX;
     private int _splashY;
-    private Random random = new();
-
+    private readonly Random _random = new();
+    private IKeyboardMouseEvents _globalHook;
     public MainWindow()
     {
         InitializeComponent();
+        HookKeyboard();
     }
+    
     private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
     {
         txtHeight.Text = BongoCat.ImageHeight.ToString();
@@ -61,7 +62,7 @@ public partial class MainWindow : Window
             if(OpenSplashScreen is BongoCat bongoCat) bongoCat.Tap();
             return;
         }
-        _currentCustomSplashScreen = ShowBongo();
+        CustomSplashScreen _currentCustomSplashScreen = ShowBongo();
         HideSplash(_currentCustomSplashScreen);
     }
     public void MainWindow_OnKeyUp(object sender, KeyEventArgs e)
@@ -144,8 +145,35 @@ public partial class MainWindow : Window
         }
         else
         {
-            splash.Left = random.Next(splash.MaxLeft);
-            splash.Top = random.Next(splash.MaxTop);
+            splash.Left = _random.Next(splash.MaxLeft);
+            splash.Top = _random.Next(splash.MaxTop);
         }
+    }
+    private void HookKeyboard()
+    {
+        _globalHook = Hook.GlobalEvents();
+        _globalHook.KeyDown += GlobalHook_KeyDown;
+        _globalHook.KeyUp += GlobalHook_KeyUp;
+    }
+    private void GlobalHook_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+    {
+        Key key = KeyInterop.KeyFromVirtualKey(e.KeyValue);
+        KeyEventArgs newE = new KeyEventArgs(Keyboard.PrimaryDevice, PresentationSource.FromVisual(this), 0, key);
+        MainWindow_OnKeyDown(sender,newE);
+    }
+
+    private void GlobalHook_KeyUp(object sender, System.Windows.Forms.KeyEventArgs e)
+    {
+        Key key = KeyInterop.KeyFromVirtualKey(e.KeyValue);
+        KeyEventArgs newE = new KeyEventArgs(Keyboard.PrimaryDevice, PresentationSource.FromVisual(this), 0, key);
+        MainWindow_OnKeyUp(sender,newE);
+    }
+
+    protected override void OnClosed(EventArgs e)
+    {
+        _globalHook.KeyDown -= GlobalHook_KeyDown;
+        _globalHook.KeyUp -= GlobalHook_KeyUp;
+        _globalHook.Dispose();
+        base.OnClosed(e);
     }
 }
