@@ -52,13 +52,11 @@ public partial class MainWindow : Window
         _notifyIcon.Icon = new Icon(IconLocation);
         _notifyIcon.Visible = true;
         _notifyIcon.DoubleClick += NotifyIcon_DoubleClick;
+        var contextMenu = new ContextMenuStrip();
+        contextMenu.Items.Add("Restore", null, (s, e) => NotifyIcon_DoubleClick(null,null));
+        contextMenu.Items.Add("Exit", null, (s, e) => Close());
 
-        // TODO: Add a context menu to the tray icon
-        // _notifyIcon.ContextMenu = new ContextMenu(new MenuItem[]
-        // {
-        //     new MenuItem("Restore", (s, e) => ShowMainWindow()),
-        //     new MenuItem("Exit", (s, e) => CloseApplication())
-        // };
+        _notifyIcon.ContextMenuStrip = contextMenu;
     }
 
     private void NotifyIcon_DoubleClick(object? sender, EventArgs e)
