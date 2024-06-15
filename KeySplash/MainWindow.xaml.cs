@@ -64,6 +64,7 @@ public partial class MainWindow : Window
     private void NotifyIcon_DoubleClick(object? sender, EventArgs e)
     {
         Show();
+        WindowState = WindowState.Normal;
     }
 
     private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
@@ -80,6 +81,8 @@ public partial class MainWindow : Window
         {
             BtnStart_OnClick(null,null);
             _isStarted = false;
+            Show();
+            WindowState = WindowState.Normal;
             return;
         }
         if (_keysPressedCount > 0 || !_isStarted) return;

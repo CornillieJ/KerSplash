@@ -6,9 +6,9 @@
         xmlns:local="clr-namespace:KeySplash"
         mc:Ignorable="d"
         Title="KeySplash" Height="450" Width="800" KeyDown="MainWindow_OnKeyDown" KeyUp="MainWindow_OnKeyUp"
-        Loaded="MainWindow_OnLoaded" StateChanged="MainWindow_OnStateChanged">
+        Loaded="MainWindow_OnLoaded" Background="LightGray" WindowStyle="SingleBorderWindow" StateChanged="MainWindow_OnStateChanged">
     <Grid>
-        <StackPanel Margin="100,50" HorizontalAlignment="Stretch" Orientation="Vertical">
+        <StackPanel Margin="100,20" HorizontalAlignment="Stretch" Orientation="Vertical">
             <GroupBox>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
                     <GroupBox HorizontalAlignment="Left" HorizontalContentAlignment="Stretch">
@@ -55,7 +55,7 @@
             </GroupBox>
             <ComboBox x:Name="cmbOptions"></ComboBox>
             <Label Content="Press start to start listening,"/>
-            <Label Content="To stop listening for keystrokes press shift+esc"/>
+            <Label Content="To stop listening for keystrokes press stop or shift+esc"/>
             <Button x:Name="btnStart" Content="Start" FontSize="50" Margin="50" Height="150" Width="200" Click="BtnStart_OnClick"/>
         </StackPanel>
     </Grid>
