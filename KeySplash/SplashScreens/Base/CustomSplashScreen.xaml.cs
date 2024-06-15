@@ -1,8 +1,10 @@
 ﻿using System.IO;
 using System.Windows;
 using System.Windows.Forms;
+using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
+using MouseEventArgs = System.Windows.Input.MouseEventArgs;
 
 namespace KeySplash;
 
@@ -43,10 +45,6 @@ public partial class CustomSplashScreen : Window
             Opacity = (_endFadeTime - now).Ticks / (double)timeSpan.Ticks;
             await Task.Delay(1);
             now = DateTime.Now;
-            //Meet bongocat, hij typt mee met mijn keystrokes
-            // nu komt hij tevoorschijn op willekeurige locaties.
-            // En dit is hoe ik vanaf nu ga programmeren.
-            //Zodat ik me goed kan focussen!
             if (_stopClosing)
             {
                 _stopClosing = false;
@@ -112,13 +110,20 @@ public partial class CustomSplashScreen : Window
         }
         if (!isRandomPosition)
         {
-            this.Left = Math.Min(x,this.MaxLeft);
+           this.Left = Math.Min(x,this.MaxLeft);
             this.Top = Math.Min(y,this.MaxTop);
         }
         else
         {
             this.Left = _random.Next(minLeft,this.MaxLeft);
-            this.Top = _random.Next(minTop,this.MaxTop);
+            this.Top = _random.Next(minTop, this.MaxTop);
         }
+        if(System.Windows.Forms.Cursor.Position.X >= Left && System.Windows.Forms.Cursor.Position.X <= Left + Width)
+            Left = MaxLeft - Left;
+    }
+
+    private void CustomSplashScreen_OnMouseEnter(object sender, MouseEventArgs e)
+    {
+        this.Left = MaxLeft - Left;
     }
 }

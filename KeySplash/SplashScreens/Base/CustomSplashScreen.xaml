@@ -10,6 +10,6 @@
         WindowStartupLocation="Manual"
         Background="Transparent" Loaded="CustomSplashScreen_OnLoaded"
         KeyDown="CustomSplashScreen_OnKeyDown"
-        KeyUp="CustomSplashScreen_OnKeyUp">
+        KeyUp="CustomSplashScreen_OnKeyUp" MouseEnter="CustomSplashScreen_OnMouseEnter">
     <Image x:Name="Image"  /> 
 </Window>
