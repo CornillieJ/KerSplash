@@ -1,9 +1,11 @@
-﻿using System.Globalization;
+﻿using System.Drawing;
+using System.Globalization;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -11,6 +13,8 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Gma.System.MouseKeyHook;
 using KeySplash.SplashScreens;
+using Application = System.Windows.Application;
+using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 
 namespace KeySplash;
 
@@ -19,7 +23,9 @@ namespace KeySplash;
 /// </summary>
 public partial class MainWindow : Window
 {
-    private const string ResourceLocation = "/resources/bongo_idle.jpg";
+    private NotifyIcon _notifyIcon;
+    private const string ResourceLocation = "resources/bongo_idle.jpg";
+    private const string IconLocation = "resources/splash.ico";// "https://www.flaticon.com/free-icons/splash" title="Splash icons">Splash icons created by Freepik - Flaticon
     private readonly string[] Options = ["BongoCat"];
     private bool _isStarted;
     private int _keysPressedCount;
@@ -36,8 +42,30 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         HookKeyboard();
+        InitializeNotifyIcon();
+        this.Icon = new BitmapImage(new Uri(IconLocation,UriKind.Relative));
     }
-    
+
+    private void InitializeNotifyIcon()
+    {
+        _notifyIcon = new NotifyIcon();
+        _notifyIcon.Icon = new Icon(IconLocation);
+        _notifyIcon.Visible = true;
+        _notifyIcon.DoubleClick += NotifyIcon_DoubleClick;
+
+        // TODO: Add a context menu to the tray icon
+        // _notifyIcon.ContextMenu = new ContextMenu(new MenuItem[]
+        // {
+        //     new MenuItem("Restore", (s, e) => ShowMainWindow()),
+        //     new MenuItem("Exit", (s, e) => CloseApplication())
+        // };
+    }
+
+    private void NotifyIcon_DoubleClick(object? sender, EventArgs e)
+    {
+        Show();
+    }
+
     private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
     {
         txtHeight.Text = "251";
@@ -48,12 +76,13 @@ public partial class MainWindow : Window
     } 
     public void MainWindow_OnKeyDown(object sender, KeyEventArgs e)
     {
-        if (_keysPressedCount > 0 || !_isStarted) return;
-        if (e.Key == Key.Escape)
+        if (e.Key == Key.Escape && (Keyboard.Modifiers & ModifierKeys.Shift) != 0 && _isStarted)
         {
             BtnStart_OnClick(null,null);
+            _isStarted = false;
             return;
         }
+        if (_keysPressedCount > 0 || !_isStarted) return;
         _keysPressedCount++;
         if (Application.Current.Windows.OfType<CustomSplashScreen>().FirstOrDefault() is CustomSplashScreen
             OpenSplashScreen && !_isMultiple)
@@ -173,5 +202,14 @@ public partial class MainWindow : Window
         if (_isMultiple)
             _isRandomPosition = true;
         else _isRandomPosition = chkRandom.IsChecked ?? false;
+    }
+
+    private void MainWindow_OnStateChanged(object? sender, EventArgs e)
+    {
+        if (WindowState == WindowState.Minimized)
+        {
+            Hide();
+            _notifyIcon.ShowBalloonTip(600, "Minimized", "Kersplash is minimized to the tray.", ToolTipIcon.Info);
+        }
     }
 }
