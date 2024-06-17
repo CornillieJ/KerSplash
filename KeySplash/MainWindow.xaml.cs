@@ -29,7 +29,7 @@ public partial class MainWindow : Window
     private List<SplashOption> _splashOptions = new List<SplashOption>()
     {
         new SplashOption("BongoCat", 498, 306
-            , "resources/bongo_idle.jpg", ["/resources/bongo_left.jpg", "/resources/bongo_right.jpg"])
+            , "/resources/bongo_idle.jpg", ["/resources/bongo_left.jpg", "/resources/bongo_right.jpg"])
     };
     private IKeyboardMouseEvents _globalHook;
     private NotifyIcon _notifyIcon;

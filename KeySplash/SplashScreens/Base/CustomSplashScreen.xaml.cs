@@ -24,14 +24,15 @@ public partial class CustomSplashScreen : System.Windows.Window
     public int MinTop { get; set; }
     public int MaxTop { get; set; }
     private Random _random = new();
-    public Uri CurrentUri { get; set; }
+    private Uri _lastTapUri;
+    public Uri _currentUri { get; set; }
 
     public CustomSplashScreen(Window window,string idleResource, string[] tapResources, int width, int height, int? minLeft = null, int? minTop=null, int? maxLeft = null, int? maxTop=null)
     {
         InitializeComponent();
         Owner = window;
         IdleImageUri = new Uri(idleResource, UriKind.Relative);
-        CurrentUri = IdleImageUri;
+        _currentUri = IdleImageUri;
         TapImageUris = tapResources.Select(r=>new Uri(r, UriKind.Relative)).ToArray();
         Image.Source = new BitmapImage(IdleImageUri);
         Width = width;
@@ -46,46 +47,6 @@ public partial class CustomSplashScreen : System.Windows.Window
     private void CustomSplashScreen_OnLoaded(object sender, RoutedEventArgs e)
     {
     }
-    private async void FadeClose(TimeSpan timeSpan)
-    {
-        _endFadeTime = DateTime.Now + timeSpan;
-        DateTime now = DateTime.Now;
-        while (DateTime.Compare(now,_endFadeTime) < 0)
-        {
-            Opacity = (_endFadeTime - now).Ticks / (double)timeSpan.Ticks;
-            await Task.Delay(1);
-            now = DateTime.Now;
-            if (_stopClosing)
-            {
-                _stopClosing = false;
-                Opacity = 1;
-                CloseDelayed(_closeDuration);
-                return;
-            }
-        }
-        base.Close(); 
-    }
-    public async void CloseDelayed(TimeSpan timeSpan)
-    {
-        _closeDuration = timeSpan;
-        _endCloseTime = DateTime.Now + timeSpan;
-        while (DateTime.Compare(DateTime.Now,_endCloseTime) < 0)
-        {
-            await Task.Delay(1);
-            if (_stopClosing)
-            {
-                _stopClosing = false;
-                _endCloseTime = DateTime.Now + timeSpan;
-            }
-        }
-        FadeClose(_fadeDuration);
-    }
-
-    public void ResetClosing()
-    {
-        _stopClosing = true;
-    }
-
     private void CustomSplashScreen_OnKeyDown(object sender, KeyEventArgs e)
     {
         ((MainWindow)Owner).MainWindow_OnKeyDown(sender,e);
@@ -125,12 +86,56 @@ public partial class CustomSplashScreen : System.Windows.Window
         this.Left = MaxLeft - Left;
     }
     
-    public void Tap()
+    private async void FadeClose(TimeSpan timeSpan)
     {
-        ChangeImage(TapImageUris[_random.Next(TapImageUris.Length)]); 
-        ImageBackToIdle();
+        _endFadeTime = DateTime.Now + timeSpan;
+        DateTime now = DateTime.Now;
+        while (DateTime.Compare(now,_endFadeTime) < 0)
+        {
+            Opacity = (_endFadeTime - now).Ticks / (double)timeSpan.Ticks;
+            await Task.Delay(1);
+            now = DateTime.Now;
+            if (_stopClosing)
+            {
+                _stopClosing = false;
+                Opacity = 1;
+                CloseDelayed(_closeDuration);
+                return;
+            }
+        }
+        base.Close(); 
+    }
+    public async void CloseDelayed(TimeSpan timeSpan)
+    {
+        _closeDuration = timeSpan;
+        _endCloseTime = DateTime.Now + timeSpan;
+        while (DateTime.Compare(DateTime.Now,_endCloseTime) < 0)
+        {
+            await Task.Delay(1);
+            if (_stopClosing)
+            {
+                _stopClosing = false;
+                _endCloseTime = DateTime.Now + timeSpan;
+            }
+        }
+        FadeClose(_fadeDuration);
     }
 
+    public void ResetClosing()
+    {
+        _stopClosing = true;
+    }
+    
+    public void Tap()
+    {
+        Uri nextUri = TapImageUris[_random.Next(TapImageUris.Length)]; 
+        if (nextUri == _lastTapUri)
+            nextUri = TapImageUris[_random.Next(TapImageUris.Length)];
+        ChangeImage(nextUri); 
+        _lastTapUri = nextUri;
+        ImageBackToIdle();
+    }
+    
     public async void ImageBackToIdle(TimeSpan? timeSpan = null)
     {
         if (timeSpan == null) timeSpan = Delay;
@@ -145,7 +150,6 @@ public partial class CustomSplashScreen : System.Windows.Window
     private void ChangeImage(Uri uriResource)
     {
         Image.Source = new BitmapImage(uriResource);
-        CurrentUri = uriResource;
+        _currentUri = uriResource;
     }
-
 }
