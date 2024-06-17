@@ -6,12 +6,17 @@
         xmlns:local="clr-namespace:KeySplash.HelperWindows"
         mc:Ignorable="d"
         Title="PlacementWindow" Height="450" Width="800" 
-        AllowsTransparency="True" WindowStyle="None" Background="#DDA9A9A9"
+        AllowsTransparency="True" WindowStyle="None" ResizeMode="CanResizeWithGrip" Background="#DDA9A9A9"
         MouseDown="PlacementWindow_OnMouseDown"
+        SizeChanged="PlacementWindow_OnSizeChanged"
         >
     <Grid>
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
             <Button x:Name="btnConfirm" Content="Confirm Placement" Padding="5,2" Click="BtnConfirm_OnClick"/>
         </StackPanel>
+        <Label Content="Use grip to resize ⇘" 
+               Margin="10"
+               VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
     </Grid>
 </Window>
+

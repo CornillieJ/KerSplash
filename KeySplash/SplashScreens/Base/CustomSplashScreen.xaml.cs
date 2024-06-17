@@ -35,6 +35,8 @@ public partial class CustomSplashScreen : System.Windows.Window
         MinTop = minTop ?? 0;
         MaxLeft = maxLeft?? (int)(System.Windows.SystemParameters.PrimaryScreenWidth - width);
         MaxTop = maxTop?? (int)(System.Windows.SystemParameters.PrimaryScreenHeight - height);
+        if (maxLeft - minLeft < width) MaxLeft = (int)(minLeft + width);
+        if (maxTop - minTop < Height) MaxTop = (int)(minTop + height);
     }
 
 
@@ -100,8 +102,16 @@ public partial class CustomSplashScreen : System.Windows.Window
         }
         else
         {
-            Left = _random.Next(MinLeft,(int)(MaxLeft-Width));
-            Top = _random.Next(MinTop, (int)(MaxTop - Width));
+            try
+            {
+                Left = _random.Next(MinLeft, (int)(MaxLeft - Width));
+                Top = _random.Next(MinTop, (int)(MaxTop - Height));
+            }
+            catch
+            {
+                Left = MinLeft;
+                Top = MinTop;
+            }
         }
         if(System.Windows.Forms.Cursor.Position.X >= Left && System.Windows.Forms.Cursor.Position.X <= Left + Width)
             Left = MaxLeft - Left;

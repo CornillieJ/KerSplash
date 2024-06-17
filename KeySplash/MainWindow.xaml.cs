@@ -171,7 +171,7 @@ public partial class MainWindow : Window
     }
     private void BtnPlacement_OnClick(object sender, RoutedEventArgs e)
     {
-        PlacementWindow placementWindow = new(_splashWidth,_splashHeight);
+        PlacementWindow placementWindow = new(_splashWidth,_splashHeight,_imageRatio);
         if (_splashX != 0 && _splashY != 0)
         {
             placementWindow.Left = _splashX;
@@ -180,12 +180,12 @@ public partial class MainWindow : Window
         placementWindow.ShowDialog();
         _splashX = (int)placementWindow.Left;
         _splashY = (int)placementWindow.Top;
+        txtHeight.Text = ((int)placementWindow.Height).ToString();
+        txtWidth.Text = ((int)placementWindow.Width).ToString();
     }
     private void BtnRange_OnClick(object sender, RoutedEventArgs e)
     {
-        PlacementWindow placementWindow = new(_splashWidth,_splashHeight);
-        placementWindow.btnConfirm.Content = "Confirm Range";
-        placementWindow.ResizeMode = ResizeMode.CanResizeWithGrip;
+        PlacementWindow placementWindow = new(_splashWidth,_splashHeight,null);
         if (_splashX != 0 && _splashY != 0)
         {
             placementWindow.Left = _splashX;
