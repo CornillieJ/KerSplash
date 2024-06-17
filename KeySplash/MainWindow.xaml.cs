@@ -12,10 +12,12 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Gma.System.MouseKeyHook;
+using KeySplash.Data;
 using KeySplash.HelperWindows;
-using KeySplash.SplashScreens;
+// using KeySplash.SplashScreens;
 using Application = System.Windows.Application;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
+using MessageBox = System.Windows.Forms.MessageBox;
 
 namespace KeySplash;
 
@@ -24,10 +26,14 @@ namespace KeySplash;
 /// </summary>
 public partial class MainWindow : Window
 {
+    private List<SplashOption> _splashOptions = new List<SplashOption>()
+    {
+        new SplashOption("BongoCat", 498, 306
+            , "resources/bongo_idle.jpg", ["/resources/bongo_left.jpg", "/resources/bongo_right.jpg"])
+    };
+    private IKeyboardMouseEvents _globalHook;
     private NotifyIcon _notifyIcon;
-    private const string ResourceLocation = "resources/bongo_idle.jpg";
     private const string IconLocation = "resources/splash.ico";// "https://www.flaticon.com/free-icons/splash" title="Splash icons">Splash icons created by Freepik - Flaticon
-    private readonly string[] Options = ["BongoCat"];
     private bool _isStarted;
     private int _keysPressedCount;
     private int _splashWidth;
@@ -40,7 +46,6 @@ public partial class MainWindow : Window
     private int? _rangeMaxLeft = null;
     private int? _rangeMinTop = null;
     private int? _rangeMaxTop = null;
-    private IKeyboardMouseEvents _globalHook;
     private bool _isMultiple;
 
     public MainWindow()
@@ -76,8 +81,8 @@ public partial class MainWindow : Window
         _splashHeight = 154;
         txtWidth.Text = _splashWidth.ToString();
         txtHeight.Text = _splashHeight.ToString();
-        _imageRatio = BongoCat.ImageWidth / (double)BongoCat.ImageHeight;
-        cmbOptions.ItemsSource = Options;
+        _imageRatio = _splashOptions[0].Width / (double)_splashOptions[0].Height;
+        cmbOptions.ItemsSource = _splashOptions;
         cmbOptions.SelectedIndex = 0;
     } 
     public void MainWindow_OnKeyDown(object sender, KeyEventArgs e)
@@ -97,11 +102,19 @@ public partial class MainWindow : Window
         {
             OpenSplashScreen.ResetClosing();
             OpenSplashScreen.PositionSplashScreen(_isRandomPosition, _splashX, _splashY);
-            if(OpenSplashScreen is BongoCat bongoCat) bongoCat.Tap();
+            OpenSplashScreen.Tap();
             return;
         }
-        CustomSplashScreen _currentCustomSplashScreen = ShowBongo();
-        HideSplash(_currentCustomSplashScreen);
+
+        try
+        {
+            CustomSplashScreen customSplashScreen = ShowSplash();
+            HideSplash(customSplashScreen);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message);
+        }
     }
     public void MainWindow_OnKeyUp(object sender, KeyEventArgs e)
     {
@@ -204,17 +217,12 @@ public partial class MainWindow : Window
         stkPositions.Visibility = _isRandomPosition? Visibility.Collapsed: Visibility.Visible;
         stkRange.Visibility = _isRandomPosition? Visibility.Visible: Visibility.Collapsed;
     }
-    private CustomSplashScreen ShowSplash(string resource)
+    private CustomSplashScreen ShowSplash()
     {
-        CustomSplashScreen splash = new CustomSplashScreen(this,resource,_splashWidth,_splashHeight);
-        splash.PositionSplashScreen(_isRandomPosition, _splashX, _splashY);
-        splash.Show();
-        splash.Topmost = true;
-        return splash;
-    }
-    private CustomSplashScreen ShowBongo()
-    {
-        CustomSplashScreen splash = new BongoCat(this, _splashWidth,_splashHeight, _rangeMinLeft,_rangeMinTop,_rangeMaxLeft,_rangeMaxTop);
+        if (cmbOptions.SelectedItem is not SplashOption selectedSplash) throw new Exception("Incorrecte selectie");
+        string resource = selectedSplash.IdleResource;
+        string[] tapResources = selectedSplash.TapResources;
+        CustomSplashScreen splash = new CustomSplashScreen(this,resource,tapResources, _splashWidth,_splashHeight, _rangeMinLeft,_rangeMinTop,_rangeMaxLeft,_rangeMaxTop);
         splash.PositionSplashScreen(_isRandomPosition, _splashX, _splashY);
         splash.Show();
         splash.Topmost = true;
