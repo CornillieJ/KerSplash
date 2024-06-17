@@ -8,7 +8,7 @@ using MouseEventArgs = System.Windows.Input.MouseEventArgs;
 
 namespace KeySplash;
 
-public partial class CustomSplashScreen : Window
+public partial class CustomSplashScreen : System.Windows.Window
 {
     protected string Resource { get; set; }
     private TimeSpan _fadeDuration = new (0, 0, 0,1);
@@ -16,11 +16,13 @@ public partial class CustomSplashScreen : Window
     private DateTime _endFadeTime;
     private DateTime _endCloseTime;
     private bool _stopClosing;
+    public int MinLeft { get; set; }
     public int MaxLeft { get; set; }
+    public int MinTop { get; set; }
     public int MaxTop { get; set; }
     private Random _random = new();
 
-    public CustomSplashScreen(Window window,string resource, int width, int height)
+    public CustomSplashScreen(Window window,string resource, int width, int height, int? minLeft = null, int? minTop=null, int? maxLeft = null, int? maxTop=null)
     {
         InitializeComponent();
         Owner = window;
@@ -29,9 +31,12 @@ public partial class CustomSplashScreen : Window
         Resource = resource;
         this.Width = width;
         this.Height = height;
-        MaxLeft = (int)(System.Windows.SystemParameters.PrimaryScreenWidth - width);
-        MaxTop = (int)(System.Windows.SystemParameters.PrimaryScreenHeight - height);
+        MinLeft = minLeft ?? 0;
+        MinTop = minTop ?? 0;
+        MaxLeft = maxLeft?? (int)(System.Windows.SystemParameters.PrimaryScreenWidth - width);
+        MaxTop = maxTop?? (int)(System.Windows.SystemParameters.PrimaryScreenHeight - height);
     }
+
 
     private void CustomSplashScreen_OnLoaded(object sender, RoutedEventArgs e)
     {
@@ -88,35 +93,15 @@ public partial class CustomSplashScreen : Window
     
     public void PositionSplashScreen(bool isRandomPosition, int x, int y)
     {
-        int minLeft = 0;
-        int minTop = 0;
-        if (Owner.Left < 0)
-        {
-            minLeft = (int)-System.Windows.SystemParameters.VirtualScreenWidth;
-            x = minLeft + x;
-            MaxLeft = (int)(0 - Width);
-        }
-        else if (Owner.Left > System.Windows.SystemParameters.PrimaryScreenWidth)
-        {
-            minLeft = (int)System.Windows.SystemParameters.PrimaryScreenWidth; 
-            x = minLeft + x;
-            MaxLeft = (int)(System.Windows.SystemParameters.PrimaryScreenWidth +
-                                  System.Windows.SystemParameters.VirtualScreenWidth - Width);
-        }
-        else
-        {
-            MaxLeft = (int)(System.Windows.SystemParameters.PrimaryScreenWidth - Width);
-            MaxTop = (int)(System.Windows.SystemParameters.PrimaryScreenHeight - Height); 
-        }
         if (!isRandomPosition)
         {
-           this.Left = Math.Min(x,this.MaxLeft);
-            this.Top = Math.Min(y,this.MaxTop);
+            Left = Math.Min(x,this.MaxLeft);
+            Top = Math.Min(y,this.MaxTop);
         }
         else
         {
-            this.Left = _random.Next(minLeft,this.MaxLeft);
-            this.Top = _random.Next(minTop, this.MaxTop);
+            Left = _random.Next(MinLeft,(int)(MaxLeft-Width));
+            Top = _random.Next(MinTop, (int)(MaxTop - Width));
         }
         if(System.Windows.Forms.Cursor.Position.X >= Left && System.Windows.Forms.Cursor.Position.X <= Left + Width)
             Left = MaxLeft - Left;

@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Gma.System.MouseKeyHook;
+using KeySplash.HelperWindows;
 using KeySplash.SplashScreens;
 using Application = System.Windows.Application;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
@@ -35,6 +36,10 @@ public partial class MainWindow : Window
     private bool _isRandomPosition;
     private int _splashX;
     private int _splashY;
+    private int? _rangeMinLeft = null;
+    private int? _rangeMaxLeft = null;
+    private int? _rangeMinTop = null;
+    private int? _rangeMaxTop = null;
     private IKeyboardMouseEvents _globalHook;
     private bool _isMultiple;
 
@@ -67,8 +72,10 @@ public partial class MainWindow : Window
 
     private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
     {
-        txtHeight.Text = "251";
-        txtWidth.Text = "154";
+        _splashWidth = 251;
+        _splashHeight = 154;
+        txtWidth.Text = _splashWidth.ToString();
+        txtHeight.Text = _splashHeight.ToString();
         _imageRatio = BongoCat.ImageWidth / (double)BongoCat.ImageHeight;
         cmbOptions.ItemsSource = Options;
         cmbOptions.SelectedIndex = 0;
@@ -114,13 +121,9 @@ public partial class MainWindow : Window
         btnStart.Content = _isStarted ? "Stop" : "Start";
         txtHeight.IsEnabled = !txtHeight.IsEnabled;
         txtWidth.IsEnabled = !txtWidth.IsEnabled;
-        txtX.IsEnabled = !txtX.IsEnabled;
-        txtY.IsEnabled = !txtY.IsEnabled;
         chkRandom.IsEnabled = !chkRandom.IsEnabled;
         int.TryParse(txtHeight.Text.Trim(), out _splashHeight);
         int.TryParse(txtWidth.Text.Trim(), out _splashWidth);
-        int.TryParse(txtX.Text.Trim(), out _splashX);
-        int.TryParse(txtY.Text.Trim(), out _splashY);
     }
     
     private void TxtWidth_OnLostFocus(object sender, RoutedEventArgs e)
@@ -134,12 +137,72 @@ public partial class MainWindow : Window
         int.TryParse(txtHeight.Text.Trim(), out int height);
         txtWidth.Text = Math.Round(height * _imageRatio).ToString();
     }
+    protected override void OnClosed(EventArgs e)
+    {
+        _globalHook.KeyDown -= GlobalHook_KeyDown;
+        _globalHook.KeyUp -= GlobalHook_KeyUp;
+        _globalHook.Dispose();
+        base.OnClosed(e);
+    }
 
+    private void ChkMultiple_OnChecked(object sender, RoutedEventArgs e)
+    {
+        _isMultiple = chkMultiple.IsChecked ?? false;
+        if (_isMultiple)
+        {
+            chkRandom.IsChecked = true;
+            chkRandom.IsEnabled = false;
+            _isRandomPosition = true;
+        }
+        else
+        {
+            chkRandom.IsEnabled = true;
+            _isRandomPosition = chkRandom.IsChecked ?? false;
+        }
+    }
+
+    private void MainWindow_OnStateChanged(object? sender, EventArgs e)
+    {
+        if (WindowState == WindowState.Minimized)
+        {
+            Hide();
+            _notifyIcon.ShowBalloonTip(600, "Minimized", "Kersplash is minimized to the tray.", ToolTipIcon.Info);
+        }
+    }
+    private void BtnPlacement_OnClick(object sender, RoutedEventArgs e)
+    {
+        PlacementWindow placementWindow = new(_splashWidth,_splashHeight);
+        if (_splashX != 0 && _splashY != 0)
+        {
+            placementWindow.Left = _splashX;
+            placementWindow.Top = _splashY;
+        }
+        placementWindow.ShowDialog();
+        _splashX = (int)placementWindow.Left;
+        _splashY = (int)placementWindow.Top;
+    }
+    private void BtnRange_OnClick(object sender, RoutedEventArgs e)
+    {
+        PlacementWindow placementWindow = new(_splashWidth,_splashHeight);
+        placementWindow.btnConfirm.Content = "Confirm Range";
+        placementWindow.ResizeMode = ResizeMode.CanResizeWithGrip;
+        if (_splashX != 0 && _splashY != 0)
+        {
+            placementWindow.Left = _splashX;
+            placementWindow.Top = _splashY;
+        }
+        placementWindow.ShowDialog();
+        _rangeMinLeft = (int)placementWindow.Left;
+        _rangeMinTop = (int)placementWindow.Top;
+        _rangeMaxLeft = (int)(_rangeMinLeft + placementWindow.Width);
+        _rangeMaxTop = (int)(_rangeMinTop + placementWindow.Height);
+    }
     private void ChkRandom_OnChecked(object sender, RoutedEventArgs e)
     {
         _isRandomPosition = chkRandom.IsChecked??false;
         if (stkPositions is null) return;
-        stkPositions.Visibility = _isRandomPosition? Visibility.Hidden: Visibility.Visible;
+        stkPositions.Visibility = _isRandomPosition? Visibility.Collapsed: Visibility.Visible;
+        stkRange.Visibility = _isRandomPosition? Visibility.Visible: Visibility.Collapsed;
     }
     private CustomSplashScreen ShowSplash(string resource)
     {
@@ -151,7 +214,7 @@ public partial class MainWindow : Window
     }
     private CustomSplashScreen ShowBongo()
     {
-        CustomSplashScreen splash = new BongoCat(this, _splashWidth,_splashHeight);
+        CustomSplashScreen splash = new BongoCat(this, _splashWidth,_splashHeight, _rangeMinLeft,_rangeMinTop,_rangeMaxLeft,_rangeMaxTop);
         splash.PositionSplashScreen(_isRandomPosition, _splashX, _splashY);
         splash.Show();
         splash.Topmost = true;
@@ -189,28 +252,5 @@ public partial class MainWindow : Window
         MainWindow_OnKeyUp(sender,newE);
     }
 
-    protected override void OnClosed(EventArgs e)
-    {
-        _globalHook.KeyDown -= GlobalHook_KeyDown;
-        _globalHook.KeyUp -= GlobalHook_KeyUp;
-        _globalHook.Dispose();
-        base.OnClosed(e);
-    }
 
-    private void ChkMultiple_OnChecked(object sender, RoutedEventArgs e)
-    {
-        _isMultiple = chkMultiple.IsChecked ?? false;
-        if (_isMultiple)
-            _isRandomPosition = true;
-        else _isRandomPosition = chkRandom.IsChecked ?? false;
-    }
-
-    private void MainWindow_OnStateChanged(object? sender, EventArgs e)
-    {
-        if (WindowState == WindowState.Minimized)
-        {
-            Hide();
-            _notifyIcon.ShowBalloonTip(600, "Minimized", "Kersplash is minimized to the tray.", ToolTipIcon.Info);
-        }
-    }
 }

@@ -32,24 +32,20 @@
                             </StackPanel>
                             <StackPanel Orientation="Horizontal">
                                 <Label Content="Complete Chaos?"/>
-                                <CheckBox x:Name="chkMultiple" Margin="0,6" IsChecked="False" 
+                                <CheckBox x:Name="chkMultiple" Margin="0,6" IsChecked="False " 
                                           Checked="ChkMultiple_OnChecked" Unchecked="ChkMultiple_OnChecked"/>
                             </StackPanel>
                         </StackPanel>
                     </GroupBox>
-                    <GroupBox HorizontalAlignment="Stretch">
-                        <StackPanel x:Name="stkPositions" Visibility="Hidden">
-                            <StackPanel Orientation="Horizontal">
-                                <StackPanel Margin="20,5,5,0">
-                                    <Label Content="X position"/>
-                                    <TextBox x:Name="txtX" Width="50"/>
-                                </StackPanel>
-                                <StackPanel Margin="20,5,10,0">
-                                    <Label Content="Y position"/>
-                                    <TextBox x:Name="txtY" Width="50"/>
-                                </StackPanel>
+                    <GroupBox HorizontalAlignment="Stretch" Width="200">
+                        <Grid>
+                            <StackPanel x:Name="stkRange" Visibility="Visible" VerticalAlignment="Center">
+                                <Button x:Name="btnRange" Content="Choose range" Margin="50,0" Click="BtnRange_OnClick"/> 
                             </StackPanel>
-                        </StackPanel>
+                            <StackPanel x:Name="stkPositions" Visibility="Collapsed" VerticalAlignment="Center">
+                               <Button x:Name="btnPlacement" Content="Choose position" Padding="5,2" Margin="40,0" Click="BtnPlacement_OnClick"/> 
+                            </StackPanel>
+                        </Grid>
                     </GroupBox> 
                 </StackPanel>
             </GroupBox>

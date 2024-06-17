@@ -13,7 +13,7 @@ public class BongoCat:CustomSplashScreen
     private readonly string[] Bongos = [BongoCatIdle,BongoCatRight,BongoCatLeft];
     private TimeSpan BongoDelay = new (0, 0, 0, 0, 200);
     private Random random = new();
-    public BongoCat(Window window, int width, int height) : base(window,BongoCatIdle,width,height)
+    public BongoCat(Window window, int width, int height, int? minLeft = null, int? minTop=null, int? maxLeft = null, int? maxTop=null) : base(window,BongoCatIdle,width,height,minLeft, minTop, maxLeft, maxTop)
     {
         string randomBongo = Bongos[random.Next(3)];
         ChangeImage(randomBongo);

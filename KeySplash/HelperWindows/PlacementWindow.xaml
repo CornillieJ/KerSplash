@@ -1,0 +1,17 @@
+﻿<Window x:Class="KeySplash.HelperWindows.PlacementWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:KeySplash.HelperWindows"
+        mc:Ignorable="d"
+        Title="PlacementWindow" Height="450" Width="800" 
+        AllowsTransparency="True" WindowStyle="None" Background="#DDA9A9A9"
+        MouseDown="PlacementWindow_OnMouseDown"
+        >
+    <Grid>
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Button x:Name="btnConfirm" Content="Confirm Placement" Padding="5,2" Click="BtnConfirm_OnClick"/>
+        </StackPanel>
+    </Grid>
+</Window>
