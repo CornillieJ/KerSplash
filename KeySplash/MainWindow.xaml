@@ -49,10 +49,10 @@
                     </GroupBox> 
                 </StackPanel>
             </GroupBox>
-            <ComboBox x:Name="cmbOptions"></ComboBox>
+            <ComboBox x:Name="cmbOptions" SelectionChanged="CmbOptions_OnSelectionChanged"/>
             <Label Content="Press start to start listening,"/>
             <Label Content="To stop listening for keystrokes press stop or shift+esc"/>
-            <Button x:Name="btnStart" Content="Start" FontSize="50" Margin="50" Height="150" Width="200" Click="BtnStart_OnClick"/>
+            <Button x:Name="btnStart" Background="PaleGreen" Content="Start" FontSize="50" Margin="50" Height="150" Width="200" Click="BtnStart_OnClick"/>
         </StackPanel>
     </Grid>
 </Window>

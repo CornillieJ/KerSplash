@@ -41,8 +41,8 @@ public partial class CustomSplashScreen : System.Windows.Window
         MinTop = minTop ?? 0;
         MaxLeft = maxLeft?? (int)(System.Windows.SystemParameters.PrimaryScreenWidth - width);
         MaxTop = maxTop?? (int)(System.Windows.SystemParameters.PrimaryScreenHeight - height);
-        if (maxLeft - minLeft < width) MaxLeft = (int)(minLeft + width);
-        if (maxTop - minTop < Height) MaxTop = (int)(minTop + height);
+        if (Math.Abs(MaxLeft - MinLeft) < Width) MaxLeft = MinLeft + width;
+        if (Math.Abs(MaxTop - MinTop) < Height) MaxTop = MinTop + height;
     }
     private void CustomSplashScreen_OnLoaded(object sender, RoutedEventArgs e)
     {
@@ -77,13 +77,15 @@ public partial class CustomSplashScreen : System.Windows.Window
                 Top = MinTop;
             }
         }
-        if(System.Windows.Forms.Cursor.Position.X >= Left && System.Windows.Forms.Cursor.Position.X <= Left + Width)
-            Left = MaxLeft - Left;
+
+        if (System.Windows.Forms.Cursor.Position.X >= Left && System.Windows.Forms.Cursor.Position.X <= Left + Width)
+            CustomSplashScreen_OnMouseEnter(null, null);
     }
 
     private void CustomSplashScreen_OnMouseEnter(object sender, MouseEventArgs e)
     {
-        this.Left = MaxLeft - Left;
+        Left = System.Windows.Forms.Cursor.Position.X + 20;
+        Top = System.Windows.Forms.Cursor.Position.Y + 20;
     }
     
     private async void FadeClose(TimeSpan timeSpan)

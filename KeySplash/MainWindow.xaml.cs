@@ -16,6 +16,9 @@ using KeySplash.Data;
 using KeySplash.HelperWindows;
 // using KeySplash.SplashScreens;
 using Application = System.Windows.Application;
+using Brush = System.Windows.Media.Brush;
+using Brushes = System.Drawing.Brushes;
+using Color = System.Windows.Media.Color;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using MessageBox = System.Windows.Forms.MessageBox;
 
@@ -28,8 +31,15 @@ public partial class MainWindow : Window
 {
     private List<SplashOption> _splashOptions = new List<SplashOption>()
     {
-        new SplashOption("BongoCat", 498, 306
-            , "/resources/bongo_idle.jpg", ["/resources/bongo_left.jpg", "/resources/bongo_right.jpg"])
+        new ("BongoCat", 498, 306, 
+            "/resources/bongo_idle.png", ["/resources/bongo_left.png", "/resources/bongo_right.png"]),
+        new ("Angry Cat", 504, 504, 
+            "/resources/cat_angry_idle.png", ["/resources/cat_angry_left.png", "/resources/cat_angry_right.png"]),
+        new ("Headpat", 504, 477, 
+            "/resources/pat_idle.png", ["/resources/pat_tap_1.png", "/resources/pat_tap_2.png"]),
+        new ("Squishy Cat", 201, 162, 
+            "/resources/squish_idle_1.png", ["/resources/squish_tap_1.png", "/resources/squish_tap_2.png"]),
+        
     };
     private IKeyboardMouseEvents _globalHook;
     private NotifyIcon _notifyIcon;
@@ -47,6 +57,7 @@ public partial class MainWindow : Window
     private int? _rangeMinTop = null;
     private int? _rangeMaxTop = null;
     private bool _isMultiple;
+    private bool _isLoaded;
 
     public MainWindow()
     {
@@ -65,7 +76,6 @@ public partial class MainWindow : Window
         var contextMenu = new ContextMenuStrip();
         contextMenu.Items.Add("Restore", null, (s, e) => NotifyIcon_DoubleClick(null,null));
         contextMenu.Items.Add("Exit", null, (s, e) => Close());
-
         _notifyIcon.ContextMenuStrip = contextMenu;
     }
 
@@ -77,13 +87,13 @@ public partial class MainWindow : Window
 
     private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
     {
+        _imageRatio = _splashOptions[0].Width / (double)_splashOptions[0].Height;
+        cmbOptions.ItemsSource = _splashOptions;
+        cmbOptions.SelectedIndex = 0;
         _splashWidth = 251;
         _splashHeight = 154;
         txtWidth.Text = _splashWidth.ToString();
         txtHeight.Text = _splashHeight.ToString();
-        _imageRatio = _splashOptions[0].Width / (double)_splashOptions[0].Height;
-        cmbOptions.ItemsSource = _splashOptions;
-        cmbOptions.SelectedIndex = 0;
     } 
     public void MainWindow_OnKeyDown(object sender, KeyEventArgs e)
     {
@@ -132,9 +142,15 @@ public partial class MainWindow : Window
     {
         _isStarted = !_isStarted;
         btnStart.Content = _isStarted ? "Stop" : "Start";
+        btnStart.Background = new SolidColorBrush(Colors.PaleVioletRed);
+        btnStart.Background = _isStarted ? new SolidColorBrush(Colors.PaleVioletRed) : new SolidColorBrush(Colors.PaleGreen);
+        cmbOptions.IsEnabled = !cmbOptions.IsEnabled;
         txtHeight.IsEnabled = !txtHeight.IsEnabled;
         txtWidth.IsEnabled = !txtWidth.IsEnabled;
         chkRandom.IsEnabled = !chkRandom.IsEnabled;
+        chkMultiple.IsEnabled = !chkMultiple.IsEnabled;
+        btnPlacement.IsEnabled = !btnPlacement.IsEnabled;
+        btnRange.IsEnabled = !btnRange.IsEnabled;
         int.TryParse(txtHeight.Text.Trim(), out _splashHeight);
         int.TryParse(txtWidth.Text.Trim(), out _splashWidth);
     }
@@ -217,6 +233,12 @@ public partial class MainWindow : Window
         stkPositions.Visibility = _isRandomPosition? Visibility.Collapsed: Visibility.Visible;
         stkRange.Visibility = _isRandomPosition? Visibility.Visible: Visibility.Collapsed;
     }
+    private void CmbOptions_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (cmbOptions.SelectedItem is not SplashOption splashOption) return;
+        txtHeight.Text = splashOption.Height.ToString();
+        txtWidth.Text = splashOption.Width.ToString();
+    }
     private CustomSplashScreen ShowSplash()
     {
         if (cmbOptions.SelectedItem is not SplashOption selectedSplash) throw new Exception("Incorrecte selectie");
@@ -259,6 +281,4 @@ public partial class MainWindow : Window
         KeyEventArgs newE = new KeyEventArgs(Keyboard.PrimaryDevice, PresentationSource.FromVisual(this), 0, key);
         MainWindow_OnKeyUp(sender,newE);
     }
-
-
 }

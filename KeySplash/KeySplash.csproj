@@ -10,14 +10,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <None Remove="resources\houseentry.png" />
-      <None Remove="resources\bongocat.gif" />
-      <Resource Include="resources\bongocat.gif">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Resource>
-    </ItemGroup>
-
-    <ItemGroup>
       <Page Update="SplashScreens\Base\CustomSplashScreen.xaml">
         <Generator>MSBuild:Compile</Generator>
         <XamlRuntime>Wpf</XamlRuntime>
@@ -27,25 +19,73 @@
 
     <ItemGroup>
       <None Remove="resources\bongo_idle.jpg" />
-      <Content Include="resources\bongo_idle.jpg">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
       <None Remove="resources\bongo_left.jpg" />
-      <Content Include="resources\bongo_left.jpg">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
       <None Remove="resources\bongo_right.jpg" />
-      <Content Include="resources\bongo_right.jpg">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
       <None Remove="resources\splash.ico" />
       <Content Include="resources\splash.ico">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="resources\cat_angry_idle.png" />
+      <Content Include="resources\cat_angry_idle.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="resources\cat_angry_left.png" />
+      <Content Include="resources\cat_angry_left.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="resources\cat_angry_right.png" />
+      <Content Include="resources\cat_angry_right.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="resources\pat_1.png" />
+      <None Remove="resources\pat_2.png" />
+      <None Remove="resources\pat_idle.png" />
+      <Content Include="resources\pat_idle.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="resources\bongo_idle.png" />
+      <Content Include="resources\bongo_idle.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="resources\bongo_left.png" />
+      <Content Include="resources\bongo_left.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="resources\bongo_right.png" />
+      <Content Include="resources\bongo_right.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="resources\pat_tap_1.png" />
+      <Content Include="resources\pat_tap_1.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="resources\pat_tap_2.png" />
+      <Content Include="resources\pat_tap_2.png">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
     </ItemGroup>
 
     <ItemGroup>
       <PackageReference Include="MouseKeyHook" Version="5.7.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="resources\squish_idle_1.png" />
+      <Resource Include="resources\squish_idle_1.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="resources\squish_idle_2.png" />
+      <Resource Include="resources\squish_idle_2.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="resources\squish_tap_1.png" />
+      <Resource Include="resources\squish_tap_1.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="resources\squish_tap_2.png" />
+      <Resource Include="resources\squish_tap_2.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Resource>
     </ItemGroup>
 
 </Project>
