@@ -11,13 +11,14 @@ namespace KeySplash;
 public partial class CustomSplashScreen : System.Windows.Window
 {
     public Uri[] TapImageUris { get; set; }
-    public Uri IdleImageUri { get; set; }
-    private TimeSpan Delay = new (0, 0, 0, 0, 200);
+    public Uri[] IdleImageUris { get; set; }
+    private TimeSpan Delay = new (0, 0, 0, 0, 300);
     protected string Resource { get; set; }
     private TimeSpan _fadeDuration = new (0, 0, 0,1);
     private TimeSpan _closeDuration;
     private DateTime _endFadeTime;
     private DateTime _endCloseTime;
+    private const int CloseDelay = 500;
     private bool _stopClosing;
     public int MinLeft { get; set; }
     public int MaxLeft { get; set; }
@@ -26,15 +27,16 @@ public partial class CustomSplashScreen : System.Windows.Window
     private Random _random = new();
     private Uri _lastTapUri;
     public Uri _currentUri { get; set; }
+    public Animation IdleAnimation { get; set; }
 
-    public CustomSplashScreen(Window window,string idleResource, string[] tapResources, int width, int height, int? minLeft = null, int? minTop=null, int? maxLeft = null, int? maxTop=null)
+    public CustomSplashScreen(Window window,string[] idleResources, string[] tapResources, int width, int height, int? minLeft = null, int? minTop=null, int? maxLeft = null, int? maxTop=null)
     {
         InitializeComponent();
         Owner = window;
-        IdleImageUri = new Uri(idleResource, UriKind.Relative);
-        _currentUri = IdleImageUri;
+        IdleImageUris = idleResources.Select(r=>new Uri(r, UriKind.Relative)).ToArray();
+        _currentUri = IdleImageUris[0];
         TapImageUris = tapResources.Select(r=>new Uri(r, UriKind.Relative)).ToArray();
-        Image.Source = new BitmapImage(IdleImageUri);
+        Image.Source = new BitmapImage(IdleImageUris[0]);
         Width = width;
         Height = height;
         MinLeft = minLeft ?? 0;
@@ -43,6 +45,7 @@ public partial class CustomSplashScreen : System.Windows.Window
         MaxTop = maxTop?? (int)(System.Windows.SystemParameters.PrimaryScreenHeight - height);
         if (Math.Abs(MaxLeft - MinLeft) < Width) MaxLeft = MinLeft + width;
         if (Math.Abs(MaxTop - MinTop) < Height) MaxTop = MinTop + height;
+        IdleAnimation = new Animation(idleResources,Image);
     }
     private void CustomSplashScreen_OnLoaded(object sender, RoutedEventArgs e)
     {
@@ -120,6 +123,8 @@ public partial class CustomSplashScreen : System.Windows.Window
                 _endCloseTime = DateTime.Now + timeSpan;
             }
         }
+
+        await Task.Delay(CloseDelay);
         FadeClose(_fadeDuration);
     }
 
@@ -130,6 +135,7 @@ public partial class CustomSplashScreen : System.Windows.Window
     
     public void Tap()
     {
+        IdleAnimation.StopAnimation();
         Uri nextUri = TapImageUris[_random.Next(TapImageUris.Length)]; 
         if (nextUri == _lastTapUri)
             nextUri = TapImageUris[_random.Next(TapImageUris.Length)];
@@ -146,7 +152,9 @@ public partial class CustomSplashScreen : System.Windows.Window
         {
             await Task.Delay(1);
         }
-        ChangeImage(IdleImageUri);
+        ChangeImage(IdleImageUris[0]);
+        IdleAnimation.Animate(200);
+        IdleAnimation.StopAnimation(Delay*3);
     }
 
     private void ChangeImage(Uri uriResource)

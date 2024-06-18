@@ -63,6 +63,30 @@
       <Content Include="resources\pat_tap_2.png">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
+      <None Remove="resources\bongo_idle_2.png" />
+      <Content Include="resources\bongo_idle_2.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="resources\bongo_idle_3.png" />
+      <Content Include="resources\bongo_idle_3.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="resources\bongo_idle_4.png" />
+      <Content Include="resources\bongo_idle_4.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="resources\slap_idle_1.png" />
+      <Content Include="resources\slap_idle_1.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="resources\slap_idle_2.png" />
+      <Content Include="resources\slap_idle_2.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="resources\slap_tap_1.png" />
+      <Content Include="resources\slap_tap_1.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
     <ItemGroup>

@@ -32,13 +32,16 @@ public partial class MainWindow : Window
     private List<SplashOption> _splashOptions = new List<SplashOption>()
     {
         new ("BongoCat", 498, 306, 
-            "/resources/bongo_idle.png", ["/resources/bongo_left.png", "/resources/bongo_right.png"]),
+            ["/resources/bongo_idle.png", "/resources/bongo_idle_2.png","/resources/bongo_idle_3.png","/resources/bongo_idle_4.png"],
+            ["/resources/bongo_left.png", "/resources/bongo_right.png"]),
         new ("Angry Cat", 504, 504, 
-            "/resources/cat_angry_idle.png", ["/resources/cat_angry_left.png", "/resources/cat_angry_right.png"]),
+            ["/resources/cat_angry_idle.png"], ["/resources/cat_angry_left.png", "/resources/cat_angry_right.png"]),
         new ("Headpat", 504, 477, 
-            "/resources/pat_idle.png", ["/resources/pat_tap_1.png", "/resources/pat_tap_2.png"]),
+            ["/resources/pat_idle.png"], ["/resources/pat_tap_1.png", "/resources/pat_tap_2.png"]),
         new ("Squishy Cat", 201, 162, 
-            "/resources/squish_idle_1.png", ["/resources/squish_tap_1.png", "/resources/squish_tap_2.png"]),
+            ["/resources/squish_idle_1.png"], ["/resources/squish_tap_1.png", "/resources/squish_tap_2.png"]),
+        new ("Cat slap", 201, 162, 
+            ["/resources/slap_idle_1.png","/resources/slap_idle_2.png"], ["/resources/slap_tap_1.png"]),
         
     };
     private IKeyboardMouseEvents _globalHook;
@@ -242,9 +245,9 @@ public partial class MainWindow : Window
     private CustomSplashScreen ShowSplash()
     {
         if (cmbOptions.SelectedItem is not SplashOption selectedSplash) throw new Exception("Incorrecte selectie");
-        string resource = selectedSplash.IdleResource;
+        string[] idleResources = selectedSplash.IdleResources;
         string[] tapResources = selectedSplash.TapResources;
-        CustomSplashScreen splash = new CustomSplashScreen(this,resource,tapResources, _splashWidth,_splashHeight, _rangeMinLeft,_rangeMinTop,_rangeMaxLeft,_rangeMaxTop);
+        CustomSplashScreen splash = new CustomSplashScreen(this,idleResources,tapResources, _splashWidth,_splashHeight, _rangeMinLeft,_rangeMinTop,_rangeMaxLeft,_rangeMaxTop);
         splash.PositionSplashScreen(_isRandomPosition, _splashX, _splashY);
         splash.Show();
         splash.Topmost = true;
