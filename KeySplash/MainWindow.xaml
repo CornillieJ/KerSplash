@@ -27,7 +27,7 @@
                         <StackPanel>
                             <StackPanel Orientation="Horizontal">
                                 <Label Content="Random locations?"/>
-                                <CheckBox x:Name="chkRandom" Margin="0,6" IsChecked="True" 
+                                <CheckBox x:Name="chkRandom" Margin="0,6" IsChecked="False" 
                                           Checked="ChkRandom_OnChecked" Unchecked="ChkRandom_OnChecked"/>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal">
@@ -39,10 +39,10 @@
                     </GroupBox>
                     <GroupBox HorizontalAlignment="Stretch" Width="200">
                         <Grid>
-                            <StackPanel x:Name="stkRange" Visibility="Visible" VerticalAlignment="Center">
+                            <StackPanel x:Name="stkRange" Visibility="Collapsed" VerticalAlignment="Center">
                                 <Button x:Name="btnRange" Content="Choose range" Margin="50,0" Click="BtnRange_OnClick"/> 
                             </StackPanel>
-                            <StackPanel x:Name="stkPositions" Visibility="Collapsed" VerticalAlignment="Center">
+                            <StackPanel x:Name="stkPositions" Visibility="Visible" VerticalAlignment="Center">
                                <Button x:Name="btnPlacement" Content="Choose position" Padding="5,2" Margin="40,0" Click="BtnPlacement_OnClick"/> 
                             </StackPanel>
                         </Grid>
